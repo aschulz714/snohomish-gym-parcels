@@ -1,0 +1,17 @@
+{
+  "name": "parcels",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "simplify": "node scripts/simplify.js",
+    "deploy": "gh-pages -d public"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "gh-pages": "^6.3.0",
+    "mapshaper": "^0.6.113"
+  }
+}

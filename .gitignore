@@ -1,0 +1,5 @@
+node_modules/
+*.geojson
+!public/parcels-web.geojson
+!public/gyms.geojson
+nul
