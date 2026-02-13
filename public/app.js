@@ -1,5 +1,12 @@
 /* Snohomish County Gym Sites — MapLibre GL JS app */
 
+// Mobile sidebar toggle
+document.getElementById("sidebar-toggle").addEventListener("click", () => {
+  const sidebar = document.getElementById("sidebar");
+  const open = sidebar.classList.toggle("open");
+  document.getElementById("sidebar-toggle").textContent = open ? "Close" : "Filters";
+});
+
 // Info tooltip toggle
 document.getElementById("info-btn").addEventListener("click", (e) => {
   e.stopPropagation();
