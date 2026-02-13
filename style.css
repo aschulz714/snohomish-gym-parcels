@@ -363,3 +363,61 @@ select {
   color: #888;
   white-space: nowrap;
 }
+
+/* Mobile sidebar toggle — hidden on desktop */
+#sidebar-toggle {
+  display: none;
+}
+
+/* ── Mobile / small screens ── */
+@media (max-width: 768px) {
+  body {
+    flex-direction: column;
+  }
+
+  #sidebar {
+    width: 100%;
+    min-width: 0;
+    max-height: 45vh;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+    display: none;
+  }
+
+  #sidebar.open {
+    display: block;
+  }
+
+  #sidebar-toggle {
+    display: block;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 3;
+    padding: 8px 14px;
+    background: #fff;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  }
+
+  #sidebar-toggle:hover {
+    background: #f0f0f0;
+  }
+
+  #basemap-toggle {
+    left: 90px;
+  }
+
+  #map {
+    min-height: 0;
+    flex: 1;
+  }
+
+  #gym-criteria {
+    width: 260px;
+  }
+}
