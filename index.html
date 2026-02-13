@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snohomish County Gym Sites</title>
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="sidebar">
+    <h1>Snohomish County Gym Sites</h1>
+    <p id="parcel-count">Loading...</p>
+
+    <div id="info-icon-wrap">
+      <button id="info-btn" title="Gym-Friendly Criteria">i</button>
+      <div id="gym-criteria">
+        <strong>Gym-Friendly Parcel Criteria</strong>
+        <ul>
+          <li><b>Zoning:</b> Commercial, Industrial, Trade, Services, Cultural/Recreation, Residential (SFR only), Undeveloped</li>
+          <li><b>Residential:</b> Only single-family detached homes — excludes apartments, condos, mobile home parks, hotels, manufactured homes</li>
+          <li><b>Lot size:</b> Default 2+ acres; slide down for urban commercial sites</li>
+          <li><b>Impervious surface:</b> 2+ acres for 20% zones; 1+ acre for 35-50% zones</li>
+        </ul>
+        <p>Based on CrossFit Lake Stevens (2.92 ac, use code 111 SFR-Detached, garage-style gym with conditional use permit).</p>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <h3>Search</h3>
+      <form id="search-form" autocomplete="off">
+        <div class="search-group">
+          <input type="text" id="search-input" placeholder="Address or gym name">
+          <button type="submit" id="search-btn">Go</button>
+        </div>
+        <p id="search-status"></p>
+      </form>
+    </div>
+
+    <div class="filter-section">
+      <h3>Zoning Category</h3>
+      <div id="zone-filters"></div>
+    </div>
+
+    <div class="filter-section">
+      <h3>Acreage</h3>
+      <div class="range-label"><span id="acres-min-val">2</span> — <span id="acres-max-val">100+</span> ac</div>
+      <div class="dual-range">
+        <input type="range" id="acres-min" min="0" max="100" step="0.1" value="2">
+        <input type="range" id="acres-max" min="0" max="100" step="0.1" value="100">
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <h3>Market Value</h3>
+      <div class="range-label">$<span id="value-min-val">0</span> — $<span id="value-max-val">2M+</span></div>
+      <div class="dual-range">
+        <input type="range" id="value-min" min="0" max="2000000" step="10000" value="0">
+        <input type="range" id="value-max" min="0" max="2000000" step="10000" value="2000000">
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <h3>City</h3>
+      <select id="city-filter">
+        <option value="">All Cities</option>
+      </select>
+    </div>
+
+    <div class="filter-section">
+      <label class="zone-checkbox">
+        <input type="checkbox" id="show-gyms" checked>
+        <span class="zone-swatch" style="background:#ff4136"></span>
+        Show Existing Gyms (558)
+      </label>
+    </div>
+
+    <button id="reset-btn">Reset Filters</button>
+  </div>
+
+  <div id="map"></div>
+
+  <div id="loading-overlay">
+    <div class="spinner"></div>
+    <p>Loading gym-friendly parcels...</p>
+  </div>
+
+  <button id="basemap-toggle" title="Toggle satellite view">Satellite</button>
+
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
