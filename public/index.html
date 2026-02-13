@@ -8,7 +8,10 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <button id="sidebar-toggle" aria-label="Toggle filters">Filters</button>
+  <div id="mobile-header">
+    <span>Snohomish County Gym Sites</span>
+    <button id="sidebar-toggle" aria-label="Toggle filters">Filters</button>
+  </div>
   <div id="sidebar">
     <h1>Snohomish County Gym Sites</h1>
     <p id="parcel-count">Loading...</p>
@@ -16,14 +19,30 @@
     <div id="info-icon-wrap">
       <button id="info-btn" title="Gym-Friendly Criteria">i</button>
       <div id="gym-criteria">
-        <strong>Gym-Friendly Parcel Criteria</strong>
+        <strong>About This Tool</strong>
+        <p>This map helps identify potential sites for opening a gym or fitness facility in Snohomish County. It displays ~205K parcels from the county assessor's data, filtered down from 318K+ total parcels to only those that could realistically support a gym operation.</p>
+
+        <strong>What Was Removed</strong>
+        <ul>
+          <li><b>Entire categories:</b> Government, Transportation, and Resource/Agriculture parcels</li>
+          <li><b>Residential:</b> Apartments, condos, mobile home parks, hotels, manufactured homes, vacation cabins — only single-family detached homes (use code 111) are kept, since these can convert to gym use with a conditional use permit</li>
+          <li><b>Services:</b> Churches, schools, funeral homes, banks, legal offices, military, postal, corrections, insurance, beauty/barber shops, auto repair, medical facilities, mini-warehouses</li>
+          <li><b>Trade:</b> Restaurants, car dealers, food retail, gas stations, bars, pharmacies, specialty retail, membership warehouses (Costco), outlet malls</li>
+          <li><b>Cultural/Recreation:</b> Parks, marinas, trails, camps, resorts, fairgrounds, libraries, swimming areas, entertainment venues, playgrounds</li>
+          <li><b>Commercial/Industrial:</b> Sawmills, logging, food processing, petroleum, heavy manufacturing, metals, cannabis processing, engineering labs</li>
+        </ul>
+
+        <strong>What Remains</strong>
         <ul>
           <li><b>Zoning:</b> Commercial, Industrial, Trade, Services, Cultural/Recreation, Residential (SFR only), Undeveloped</li>
-          <li><b>Residential:</b> Only single-family detached homes — excludes apartments, condos, mobile home parks, hotels, manufactured homes</li>
-          <li><b>Lot size:</b> Default 2+ acres; slide down for urban commercial sites</li>
+          <li><b>Lot size:</b> Default 2+ acres; use the slider to find smaller urban commercial sites</li>
           <li><b>Impervious surface:</b> 2+ acres for 20% zones; 1+ acre for 35-50% zones</li>
         </ul>
-        <p>Based on CrossFit Lake Stevens (2.92 ac, use code 111 SFR-Detached, garage-style gym with conditional use permit).</p>
+
+        <strong>Existing Gyms</strong>
+        <p>558 gyms and fitness centers are shown as red dots, sourced from Overture Maps. These help identify areas with gym demand and validate the filtering criteria.</p>
+
+        <p>Modeled after CrossFit Lake Stevens (2.92 ac, use code 111 SFR-Detached, garage-style gym operating with a conditional use permit on residential land).</p>
       </div>
     </div>
 
