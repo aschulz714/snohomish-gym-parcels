@@ -95,6 +95,29 @@
       </label>
     </div>
 
+    <div class="filter-section">
+      <h3>Competition Analysis</h3>
+      <label class="zone-checkbox">
+        <input type="checkbox" id="show-buffer-3mi">
+        <span class="zone-swatch" style="background:rgba(255,65,54,0.5)"></span>
+        3-mile gym radius
+      </label>
+      <label class="zone-checkbox">
+        <input type="checkbox" id="show-buffer-5mi">
+        <span class="zone-swatch" style="background:rgba(255,152,0,0.5)"></span>
+        5-mile gym radius
+      </label>
+    </div>
+
+    <div class="filter-section">
+      <h3>Demographics</h3>
+      <label class="zone-checkbox">
+        <input type="checkbox" id="show-income">
+        <span class="zone-swatch" style="background:linear-gradient(90deg, #c0392b, #d4a017, #2d8a4e)"></span>
+        Median Household Income
+      </label>
+    </div>
+
     <button id="reset-btn">Reset Filters</button>
   </div>
 
@@ -105,9 +128,19 @@
     <p>Loading gym-friendly parcels...</p>
   </div>
 
+  <div id="income-legend" style="display:none">
+    <strong>Median Household Income</strong>
+    <div class="legend-row"><span class="legend-swatch" style="background:#2d8a4e"></span> High ($75K+)</div>
+    <div class="legend-row"><span class="legend-swatch" style="background:#d4a017"></span> Medium ($50-75K)</div>
+    <div class="legend-row"><span class="legend-swatch" style="background:#c0392b"></span> Low (&lt;$50K)</div>
+    <div class="legend-row"><span class="legend-swatch" style="background:#999"></span> No Data</div>
+    <div class="legend-source">ACS 2022 5-Year Estimates</div>
+  </div>
+
   <button id="basemap-toggle" title="Toggle satellite view">Satellite</button>
 
   <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

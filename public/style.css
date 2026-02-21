@@ -383,6 +383,46 @@ select {
   display: none;
 }
 
+/* Income legend */
+#income-legend {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.92);
+  padding: 10px 14px;
+  border-radius: 6px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+#income-legend strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 13px;
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-swatch {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.legend-source {
+  margin-top: 6px;
+  font-size: 10px;
+  color: #888;
+}
+
 /* ── Mobile / small screens ── */
 @media (max-width: 768px) {
   body {
@@ -448,5 +488,11 @@ select {
 
   #gym-criteria {
     width: 260px;
+  }
+
+  #income-legend {
+    bottom: 50px;
+    right: 10px;
+    max-width: 180px;
   }
 }

@@ -129,6 +129,24 @@ document.getElementById("reset-btn").addEventListener("click", () => {
   valueMinVal.textContent = "0";
   valueMaxVal.textContent = "2M+";
   citySelect.value = "";
+  // Reset buffer checkboxes
+  document.getElementById("show-buffer-3mi").checked = false;
+  document.getElementById("show-buffer-5mi").checked = false;
+  if (map.getLayer("gym-buffer-3mi-fill")) {
+    map.setLayoutProperty("gym-buffer-3mi-fill", "visibility", "none");
+    map.setLayoutProperty("gym-buffer-3mi-outline", "visibility", "none");
+  }
+  if (map.getLayer("gym-buffer-5mi-fill")) {
+    map.setLayoutProperty("gym-buffer-5mi-fill", "visibility", "none");
+    map.setLayoutProperty("gym-buffer-5mi-outline", "visibility", "none");
+  }
+  // Reset income layer
+  document.getElementById("show-income").checked = false;
+  if (map.getLayer("income-fill")) {
+    map.setLayoutProperty("income-fill", "visibility", "none");
+    map.setLayoutProperty("income-outline", "visibility", "none");
+  }
+  document.getElementById("income-legend").style.display = "none";
   applyFilters();
 });
 
@@ -136,6 +154,9 @@ document.getElementById("reset-btn").addEventListener("click", () => {
 
 let parcelsData = null; // set after GeoJSON loads
 let gymsData = null;    // set after gyms.geojson loads
+let gymBuffers3mi = null; // computed once after gyms load
+let gymBuffers5mi = null;
+let incomeData = null;
 const searchForm = document.getElementById("search-form");
 const searchInput = document.getElementById("search-input");
 const searchStatus = document.getElementById("search-status");
@@ -236,6 +257,92 @@ let hoveredId = null;
 /* ── Add data sources & layers (called on initial load and after style switch) ── */
 
 function addDataLayers() {
+  // Income choropleth layers (rendered underneath everything else)
+  if (incomeData) {
+    map.addSource("income-tracts", { type: "geojson", data: incomeData });
+    map.addLayer({
+      id: "income-fill",
+      type: "fill",
+      source: "income-tracts",
+      paint: {
+        "fill-color": [
+          "match", ["get", "income_bracket"],
+          "high", "#2d8a4e",
+          "medium", "#d4a017",
+          "low", "#c0392b",
+          "nodata", "#999",
+          "#999"
+        ],
+        "fill-opacity": isSatellite ? 0.35 : 0.25,
+      },
+      layout: { visibility: "none" },
+    });
+    map.addLayer({
+      id: "income-outline",
+      type: "line",
+      source: "income-tracts",
+      paint: {
+        "line-color": isSatellite ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.15)",
+        "line-width": 1,
+      },
+      layout: { visibility: "none" },
+    });
+
+    // Restore visibility from checkbox state (for style switch support)
+    const incVis = document.getElementById("show-income").checked ? "visible" : "none";
+    map.setLayoutProperty("income-fill", "visibility", incVis);
+    map.setLayoutProperty("income-outline", "visibility", incVis);
+  }
+
+  // Buffer ring layers (rendered underneath parcels)
+  if (gymBuffers5mi) {
+    map.addSource("gym-buffer-5mi", { type: "geojson", data: gymBuffers5mi });
+    map.addLayer({
+      id: "gym-buffer-5mi-fill",
+      type: "fill",
+      source: "gym-buffer-5mi",
+      paint: { "fill-color": "#ff9800", "fill-opacity": 0.08 },
+      layout: { visibility: "none" },
+    });
+    map.addLayer({
+      id: "gym-buffer-5mi-outline",
+      type: "line",
+      source: "gym-buffer-5mi",
+      paint: { "line-color": "#ff9800", "line-width": 0.5, "line-opacity": 0.3 },
+      layout: { visibility: "none" },
+    });
+  }
+
+  if (gymBuffers3mi) {
+    map.addSource("gym-buffer-3mi", { type: "geojson", data: gymBuffers3mi });
+    map.addLayer({
+      id: "gym-buffer-3mi-fill",
+      type: "fill",
+      source: "gym-buffer-3mi",
+      paint: { "fill-color": "#ff4136", "fill-opacity": 0.10 },
+      layout: { visibility: "none" },
+    });
+    map.addLayer({
+      id: "gym-buffer-3mi-outline",
+      type: "line",
+      source: "gym-buffer-3mi",
+      paint: { "line-color": "#ff4136", "line-width": 0.5, "line-opacity": 0.3 },
+      layout: { visibility: "none" },
+    });
+  }
+
+  // Respect current buffer checkbox state after style switch
+  const buf3Vis = document.getElementById("show-buffer-3mi").checked ? "visible" : "none";
+  const buf5Vis = document.getElementById("show-buffer-5mi").checked ? "visible" : "none";
+  if (map.getLayer("gym-buffer-3mi-fill")) {
+    map.setLayoutProperty("gym-buffer-3mi-fill", "visibility", buf3Vis);
+    map.setLayoutProperty("gym-buffer-3mi-outline", "visibility", buf3Vis);
+  }
+  if (map.getLayer("gym-buffer-5mi-fill")) {
+    map.setLayoutProperty("gym-buffer-5mi-fill", "visibility", buf5Vis);
+    map.setLayoutProperty("gym-buffer-5mi-outline", "visibility", buf5Vis);
+  }
+
   // Parcel source + layers
   map.addSource("parcels", {
     type: "geojson",
@@ -401,6 +508,24 @@ map.on("load", () => {
     .then((gyms) => {
       gymsData = gyms;
 
+      // Compute competition buffer rings (once)
+      gymBuffers3mi = turf.buffer(gymsData, 3, { units: "miles" });
+      gymBuffers5mi = turf.buffer(gymsData, 5, { units: "miles" });
+
+      // Load income tract data
+      return fetch("income-tracts.geojson")
+        .then((r) => {
+          if (!r.ok) throw new Error("Failed to load income data");
+          return r.json();
+        })
+        .then((income) => {
+          incomeData = income;
+        })
+        .catch((err) => {
+          console.warn("Income data not available:", err.message);
+        });
+    })
+    .then(() => {
       // Add layers (initial)
       addDataLayers();
 
@@ -419,6 +544,50 @@ document.getElementById("show-gyms").addEventListener("change", (e) => {
   if (map.getLayer("gyms-glow")) map.setLayoutProperty("gyms-glow", "visibility", vis);
   if (map.getLayer("gyms-circle")) map.setLayoutProperty("gyms-circle", "visibility", vis);
   if (map.getLayer("gyms-label")) map.setLayoutProperty("gyms-label", "visibility", vis);
+});
+
+// Toggle income layer visibility
+document.getElementById("show-income").addEventListener("change", (e) => {
+  const vis = e.target.checked ? "visible" : "none";
+  if (map.getLayer("income-fill")) map.setLayoutProperty("income-fill", "visibility", vis);
+  if (map.getLayer("income-outline")) map.setLayoutProperty("income-outline", "visibility", vis);
+  document.getElementById("income-legend").style.display = e.target.checked ? "block" : "none";
+});
+
+// Toggle buffer ring visibility
+document.getElementById("show-buffer-3mi").addEventListener("change", (e) => {
+  const vis = e.target.checked ? "visible" : "none";
+  if (map.getLayer("gym-buffer-3mi-fill")) map.setLayoutProperty("gym-buffer-3mi-fill", "visibility", vis);
+  if (map.getLayer("gym-buffer-3mi-outline")) map.setLayoutProperty("gym-buffer-3mi-outline", "visibility", vis);
+});
+document.getElementById("show-buffer-5mi").addEventListener("change", (e) => {
+  const vis = e.target.checked ? "visible" : "none";
+  if (map.getLayer("gym-buffer-5mi-fill")) map.setLayoutProperty("gym-buffer-5mi-fill", "visibility", vis);
+  if (map.getLayer("gym-buffer-5mi-outline")) map.setLayoutProperty("gym-buffer-5mi-outline", "visibility", vis);
+});
+
+// Click popup for income tracts (only when no parcel covers the click)
+map.on("click", "income-fill", (e) => {
+  // Skip if a parcel was clicked (parcels-fill handler will fire instead)
+  const parcelFeatures = map.queryRenderedFeatures(e.point, { layers: ["parcels-fill"] });
+  if (parcelFeatures.length) return;
+  if (!e.features.length) return;
+  const p = e.features[0].properties;
+  const income = p.median_income
+    ? "$" + Number(p.median_income).toLocaleString()
+    : "No data";
+  const bracketLabel = { high: "High ($75K+)", medium: "Medium ($50-75K)", low: "Low (<$50K)", nodata: "No data" };
+  const html = `
+    <h4>${p.tract_name || "Census Tract"}</h4>
+    <table>
+      <tr><td>Median Income</td><td>${income}</td></tr>
+      <tr><td>Bracket</td><td>${bracketLabel[p.income_bracket] || "—"}</td></tr>
+      <tr><td>GEOID</td><td>${p.GEOID}</td></tr>
+    </table>`;
+  new maplibregl.Popup({ maxWidth: "280px" })
+    .setLngLat(e.lngLat)
+    .setHTML(html)
+    .addTo(map);
 });
 
 // Click popup for parcels
